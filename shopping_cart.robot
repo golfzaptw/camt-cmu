@@ -23,21 +23,30 @@ Open CAMT Application
     [Documentation]    Test case to open the application, login, and navigate to Google
     Open SauceLab Application
     Login to SauceLab    ${USERNAME}    ${PASSWORD}
+    # Find and tap sort button
     Wait Until Element Is Visible    locator=accessibility_id=test-Modal Selector Button    timeout=5s
     Click Element    locator=accessibility_id=test-Modal Selector Button
+    # Find and tap sort option
     Wait Until Element Is Visible    locator=android=new UiSelector().text("Name (A to Z)")    timeout=5s
     Click Element    locator=android=new UiSelector().text("Name (A to Z)")
+
     BuiltIn.Wait Until Keyword Succeeds     5x    3s     Run Keywords
     ...    Swipe    1000    1000    1000    500
     ...    AND    Wait Until Element Is Visible    locator=android=new UiSelector().text("Test.allTheThings() T-Shirt (Red)")    timeout=2s
     ...    AND    Click Element    locator=android=new UiSelector().text("Test.allTheThings() T-Shirt (Red)")
+    
     Wait Until Page Contains    text=Test.allTheThings() T-Shirt (Red)
+
     BuiltIn.Wait Until Keyword Succeeds     5x    3s     Run Keywords
     ...    Swipe    1000    1000    1000    500
     ...    AND    Wait Until Element Is Visible    locator=accessibility_id=test-ADD TO CART    timeout=2s
+    
     ${item_price}    Get Text    locator=accessibility_id=test-Price
     ${item_price}    String.Remove String    ${item_price}    $
     Click Element    locator=accessibility_id=test-ADD TO CART
+    Wait Until Element Is Visible    locator=accessibility_id=test-REMOVE    timeout=5s
+    ${item_count}    Get Text    locator=android=new UiSelector().description("test-Cart").childSelector(new UiSelector().className("android.widget.TextView"))
+    Should Be Equal As Numbers    ${item_count}    1
 
 *** Keywords ***
 Open SauceLab Application
