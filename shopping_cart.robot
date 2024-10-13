@@ -69,7 +69,11 @@ Open CAMT Application
     # **Step 10: Fill in the Form with "Firstname, Lastname, Postal Code" Data**
     Wait Until Element Is Visible    locator=accessibility_id=test-First Name    timeout=5s
     Input Text    locator=accessibility_id=test-First Name    text=John
-    Input Text    locator=accessibility_id=test-Last Name    text=Doe
+    ${status}    Run Keyword And Return Status    Input Text    locator=accessibility_id=test-Last Name    text=Doe
+    IF    not ${status}
+        Swipe    1000    1000    1000    500
+        Input Text    locator=accessibility_id=test-Last Name    text=Doe
+    END
     Input Text    locator=accessibility_id=test-Zip/Postal Code    text=12345
     
     # **Step 11: Click "Continue" Button**
@@ -83,9 +87,31 @@ Open CAMT Application
     Should Be Equal As Numbers    ${item_price}    ${shopping_price}
 
     # **Step 13: Verify "Item Total", "Tax", and "Total" Are Correct**
-    Wait Until Element Is Visible    locator=android=new UiSelector().textContains("Item total")
-    ${item_total}    Get Text    locator=android=new UiSelector().textContains("Item total")
+    Wait Until Element Is Visible    locator=android=new UiSelector().textContains("Item total:")
+    ${item_total}    Get Text    locator=android=new UiSelector().textContains("Item total:")
     Should Be Equal    ${item_total}    Item total: $${item_price}
+    ${CONSTANT_TAX}    Set Variable    0.08
+    ${tax}    Evaluate    ${item_price} * ${CONSTANT_TAX}
+    ${total}    Evaluate    ${item_price} + ${tax}
+    ${tax}    Evaluate    round(${tax}, 2)
+    ${total}    Evaluate    round(${total}, 2)
+    ${item_tax}    Get Text    locator=android=new UiSelector().textContains("Tax:")
+    ${item_total}    Get Text    locator=android=new UiSelector().textStartsWith("Total:")
+    Should Be Equal    ${item_tax}    Tax: $${tax}
+    Should Be Equal    ${item_total}    Total: $${total}
+
+    # **Step 14: Click "Finish" Button**
+    BuiltIn.Wait Until Keyword Succeeds     5x    3s     Run Keywords
+    ...    Swipe    1000    1000    1000    500
+    ...    AND    Wait Until Element Is Visible    locator=accessibility_id=test-FINISH    timeout=2s
+    ...    AND    Click Element    locator=accessibility_id=test-FINISH
+
+    # **Step 15: Verify the Success Message**
+    Wait Until Page Contains    text=THANK YOU FOR YOU ORDER
+    Wait Until Page Contains    text=Your order has been dispatched, and will arrive just as fast as the pony can get there!
+    Wait Until Element Is Visible    locator=accessibility_id=test-BACK HOME    timeout=5s
+    Click Element    locator=accessibility_id=test-BACK HOME
+    Wait Until Element Is Visible    ${home.products_page}    timeout=5s
 
 *** Keywords ***
 Open SauceLab Application
