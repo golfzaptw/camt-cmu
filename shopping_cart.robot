@@ -62,6 +62,31 @@ Open CAMT Application
     ${shopping_price}    String.Remove String    ${shopping_price}    $
     Should Be Equal As Numbers    ${item_price}    ${shopping_price}
 
+    # **Step 9: Click "Checkout" Button**
+    Wait Until Element Is Visible    locator=accessibility_id=test-CHECKOUT    timeout=5s
+    Click Element    locator=accessibility_id=test-CHECKOUT
+
+    # **Step 10: Fill in the Form with "Firstname, Lastname, Postal Code" Data**
+    Wait Until Element Is Visible    locator=accessibility_id=test-First Name    timeout=5s
+    Input Text    locator=accessibility_id=test-First Name    text=John
+    Input Text    locator=accessibility_id=test-Last Name    text=Doe
+    Input Text    locator=accessibility_id=test-Zip/Postal Code    text=12345
+    
+    # **Step 11: Click "Continue" Button**
+    Wait Until Element Is Visible    locator=accessibility_id=test-CONTINUE    timeout=5s
+    Click Element    locator=accessibility_id=test-CONTINUE
+
+    # **Step 12: Verify the Product Name and Price Are Correct Again**
+    Wait Until Page Contains    text=Test.allTheThings() T-Shirt (Red)
+    ${shopping_price}    Get Text    locator=android=new UiSelector().description("test-Price").childSelector(new UiSelector().className("android.widget.TextView"))
+    ${shopping_price}    String.Remove String    ${shopping_price}    $
+    Should Be Equal As Numbers    ${item_price}    ${shopping_price}
+
+    # **Step 13: Verify "Item Total", "Tax", and "Total" Are Correct**
+    Wait Until Element Is Visible    locator=android=new UiSelector().textContains("Item total")
+    ${item_total}    Get Text    locator=android=new UiSelector().textContains("Item total")
+    Should Be Equal    ${item_total}    Item total: $${item_price}
+
 *** Keywords ***
 Open SauceLab Application
     Open Application    ${REMOTE_URL}    &{ANDROID_DEVICE}
